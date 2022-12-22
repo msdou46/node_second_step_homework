@@ -25,13 +25,10 @@ module.exports = async (req, res, next) => {
     const token_record = await User_token.findOne({where: {token: refreshToken}})
 
     if (isAccessTokenValidate === false) {
-        console.log("refresh 는 살아있는데 access 는 죽었엉! ㄷㄷ")
         if (token_record === null || token_record === undefined) {
-            console.log("어라? 당신 누구야!");
             return res.status(400).json({success:false, 
                 errorMessage: "Refresh Token의 정보가 서버에 존재하지 않습니다."})
         }
-        console.log("1111111")
         const newAccessToken = jwt.sign({userId: token_record.userId, email: token_record.email}
             , SECRET_KEY, { expiresIn: '60s' })
         res.cookie('accessToken', newAccessToken);
@@ -39,7 +36,6 @@ module.exports = async (req, res, next) => {
         res.locals.nickname = token_record.nickname;
         return next();
     }
-    console.log("2222222")
     res.locals.userId = token_record.userId;
     res.locals.nickname = token_record.nickname;
     next();
